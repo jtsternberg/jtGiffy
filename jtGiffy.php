@@ -35,6 +35,9 @@ class jtGiffy {
 
 		// Halt here for json
 		if ( isset( $_GET['json'] ) ) {
+			if ( empty( $gifs ) ) {
+				wp_send_json_error( 'No gifs found! Try a different search' );
+			}
 			wp_send_json_success( $gifs );
 		}
 
