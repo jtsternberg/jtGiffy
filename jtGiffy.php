@@ -13,7 +13,7 @@ class jtGiffy {
 
 	public function __construct() {
 
-		// Save your path via ?jtgiffy_path=/Users/jt/Sites/wpengine/
+		// Save your path via ?jtgiffy_url=http://jtsternberg.com/gifs
 		if ( isset( $_GET['jtgiffy_url'] ) ) {
 			update_option( 'jtgiffy_url', esc_url( $_GET['jtgiffy_url'] ) );
 		}
