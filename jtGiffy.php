@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Giffy JSON endpoint
-Plugin URI: http://jtsternberg.com/?gifs
+Plugin URI: http://jtsternberg.com/?gifs&json
 Description: Give JSON access to your gifs. C'mon, share the love!
 Author URI: http://jtsternberg.com
 Author: Jtsternberg
