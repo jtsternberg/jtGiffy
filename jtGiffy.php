@@ -26,12 +26,16 @@ class jtGiffy {
 		add_action( 'template_redirect', array( $this, 'get_gifs' ), 9999 );
 	}
 
-	public function get_gifs() {
+	public function gif_paths() {
 		$gifs = glob( $this->gif_path );
-		if ( empty( $gifs ) )
-			return false;
+		return ! empty( $gifs ) ? $gifs : false;
+	}
 
-		$gifs = $this->gif_urls( $gifs );
+	public function get_gifs() {
+
+		$gifs = $this->gif_urls( $this->gif_paths() );
+		if ( ! $gifs )
+			return false;
 
 		// Halt here for json
 		if ( isset( $_GET['json'] ) ) {
@@ -45,6 +49,9 @@ class jtGiffy {
 	}
 
 	public function gif_urls( $gif_paths ) {
+		if ( ! $gif_paths )
+			return false;
+
 		$gifs = (object) array();
 		foreach ( $gif_paths as $gif ) {
 			$filename = explode( '/', $gif );
