@@ -45,7 +45,7 @@ class jtGiffy {
 	}
 
 	public function gif_urls( $gif_paths ) {
-		$gifs = array();
+		$gifs = (object) array();
 		foreach ( $gif_paths as $gif ) {
 			$filename = explode( '/', $gif );
 			$filename = array_pop( $filename );
@@ -59,7 +59,7 @@ class jtGiffy {
 			$nice_name = array_shift( $nice_name );
 			$src = esc_url( str_ireplace( ABSPATH, site_url( '/' ), $gif ) );
 
-			$gifs[ $filename ] = array(
+			$gifs->$filename = (object) array(
 				'name' => str_ireplace( '-', ' ', $nice_name ),
 				'src'  => $src,
 			);
