@@ -53,9 +53,12 @@ class jtGiffy {
 			return false;
 
 		$gifs = (object) array();
-		foreach ( $gif_paths as $gif ) {
-			$filename = explode( '/', $gif );
+		foreach ( $gif_paths as $gif_path ) {
+
+			$filename = explode( '/', $gif_path );
 			$filename = array_pop( $filename );
+
+			$thumb_src = $this->thumb_path_to_url( $gif_path, $filename );
 
 			// Filter out if a term was searched & json
 			if ( isset( $_GET['json'] ) && $_GET['gifs'] && false === stripos( $filename, $_GET['gifs'] ) ) {
@@ -64,14 +67,41 @@ class jtGiffy {
 
 			$nice_name = explode( '.', $filename );
 			$nice_name = array_shift( $nice_name );
-			$src = esc_url( str_ireplace( ABSPATH, site_url( '/' ), $gif ) );
+			$src = esc_url( str_ireplace( ABSPATH, site_url( '/' ), $gif_path ) );
 
 			$gifs->$filename = (object) array(
-				'name' => str_ireplace( '-', ' ', $nice_name ),
-				'src'  => $src,
+				'name'      => str_ireplace( '-', ' ', $nice_name ),
+				'src'       => $src,
+				'thumb_src' => $thumb_src,
 			);
 		}
+
 		return $gifs;
+	}
+
+	public function thumb_path_to_url( $gif_path, $filename ) {
+		// Get thumb path
+		$thumb_path = str_ireplace( $filename, 'thumbs/'. $filename, $gif_path );
+
+		// Thumb exists?
+		if ( ! file_exists( $thumb_path ) ) {
+			$thumb_path = $this->thumb_it( $gif_path, $thumb_path );
+		}
+
+		return $thumb_path
+			? esc_url( str_ireplace( ABSPATH, site_url( '/' ), $thumb_path ) )
+			: '';
+	}
+
+	public function thumb_it( $file, $new_file ) {
+		$image = wp_get_image_editor( $file );
+		if ( ! is_wp_error( $image ) ) {
+			$image->resize( 30, 30, true );
+			$image->set_quality( 25 );
+			$image->save( $new_file, 'image/gif' );
+			return $new_file;
+		}
+		return '';
 	}
 
 }
