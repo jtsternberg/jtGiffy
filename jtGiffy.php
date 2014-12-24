@@ -6,7 +6,7 @@ Description: Give JSON access to your gifs. C'mon, share the love! To set the lo
 Author URI: http://jtsternberg.com
 Author: Jtsternberg
 Donate link: http://dsgnwrks.pro/give/
-Version: 0.1.0
+Version: 0.1.1
 */
 
 class jtGiffy {
