@@ -55,28 +55,40 @@ class jtGiffy {
 		$gifs = (object) array();
 		foreach ( $gif_paths as $gif_path ) {
 
-			$filename = explode( '/', $gif_path );
-			$filename = array_pop( $filename );
+			$gif = $this->process_gif( $gif_path, isset( $_GET['json'] ) && $_GET['gifs'] ? $_GET['gifs'] : false );
 
-			$thumb_src = $this->thumb_path_to_url( $gif_path, $filename );
-
-			// Filter out if a term was searched & json
-			if ( isset( $_GET['json'] ) && $_GET['gifs'] && false === stripos( $filename, $_GET['gifs'] ) ) {
+			if ( ! $gif ) {
 				continue;
 			}
 
-			$nice_name = explode( '.', $filename );
-			$nice_name = array_shift( $nice_name );
-			$src = esc_url( str_ireplace( ABSPATH, site_url( '/' ), $gif_path ) );
-
-			$gifs->$filename = (object) array(
-				'name'      => str_ireplace( '-', ' ', $nice_name ),
-				'src'       => $src,
-				'thumb_src' => $thumb_src,
+			$gifs->{ $gif['filename'] } = (object) array(
+				'name'      => $gif['name'],
+				'src'       => esc_url( str_ireplace( ABSPATH, site_url( '/' ), $gif_path ) ),
+				'thumb_src' => $this->thumb_path_to_url( $gif_path, $gif['filename'] ),
 			);
 		}
 
 		return $gifs;
+	}
+
+	public function process_gif( $gif_path, $search = '' ) {
+
+		$filename = explode( '/', $gif_path );
+		$filename = array_pop( $filename );
+
+		// Filter out if a term was searched & json
+		if ( $search && false === stripos( $filename, $search ) ) {
+			return false;
+		}
+
+		$nice_name = explode( '.', $filename );
+		$nice_name = array_shift( $nice_name );
+
+		return array(
+			'name'      => str_ireplace( '-', ' ', $nice_name ),
+			'filename'  => $filename,
+		);
+
 	}
 
 	public function thumb_path_to_url( $gif_path, $filename ) {
