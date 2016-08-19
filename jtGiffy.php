@@ -14,8 +14,8 @@ class jtGiffy {
 	public function __construct() {
 
 		// Save your path via ?jtgiffy_url=http://jtsternberg.com/gifs
-		if ( isset( $_GET['jtgiffy_url'] ) ) {
-			update_option( 'jtgiffy_url', esc_url( $_GET['jtgiffy_url'] ) );
+		if ( isset( $_REQUEST['jtgiffy_url'] ) ) {
+			update_option( 'jtgiffy_url', esc_url( $_REQUEST['jtgiffy_url'] ) );
 		}
 		$this->gif_url = get_option( 'jtgiffy_url', site_url( '/gifs' ) );
 		$this->gif_path = trailingslashit( str_ireplace( site_url(), untrailingslashit( ABSPATH ), $this->gif_url ) ) .'*.gif';
@@ -38,7 +38,7 @@ class jtGiffy {
 			return false;
 
 		// Halt here for json
-		if ( isset( $_GET['json'] ) ) {
+		if ( isset( $_REQUEST['json'] ) ) {
 			if ( empty( $gifs ) ) {
 				wp_send_json_error( 'No gifs found! Try a different search' );
 			}
@@ -55,7 +55,10 @@ class jtGiffy {
 		$gifs = (object) array();
 		foreach ( $gif_paths as $gif_path ) {
 
-			$gif = $this->process_gif( $gif_path, isset( $_GET['json'] ) && $_GET['gifs'] ? $_GET['gifs'] : false );
+			$search = ! empty( $_REQUEST['gifs'] ) ? $_REQUEST['gifs'] : false;
+			$search = empty( $search ) && ! empty( $_REQUEST['text'] ) ? $_REQUEST['text'] : false;
+
+			$gif = $this->process_gif( $gif_path, isset( $_REQUEST['json'] ) && $search ? $search : false );
 
 			if ( ! $gif ) {
 				continue;
@@ -120,6 +123,6 @@ class jtGiffy {
 
 $jtGiffy = new jtGiffy();
 
-if ( isset( $_GET['gifs'], $_GET['json'] ) ) {
+if ( isset( $_REQUEST['gifs'], $_REQUEST['json'] ) ) {
 	$jtGiffy->hooks();
 }
